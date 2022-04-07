@@ -1,6 +1,10 @@
+
 name: Main
 
-on: push
+on:
+  push:
+    tags:
+      - '*'
 
 jobs:
   build:
@@ -9,10 +13,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Build
-        run: echo "Nouvelle release"
+        run: zip -r add_sphere_formation.zip add_sphere_formation
       - name: Release
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
         with:
-          files: add_sphere_formation
-
+          files: add_sphere_formation.zip
