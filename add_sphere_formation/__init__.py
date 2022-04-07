@@ -4,7 +4,7 @@
 bl_info = {
     "name": "Add a formation made of spheres",
     "author": "Florence Constans",
-    "version": (1, 3),
+    "version": (0, 4),
     "blender": (2, 93, 0),
     "location": "View3D > Add > Mesh > New Object",
     "description": "Adds a formation made of spheres meshes",

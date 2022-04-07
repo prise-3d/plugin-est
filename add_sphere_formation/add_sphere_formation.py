@@ -62,7 +62,7 @@ class ADD_spheres_operator(bpy.types.Operator):
             ('ADD_SPHERE_PYR', 'Add a pyramid made of spheres',
              'generate a pyramid of spheres'),
             ('ADD_SIERP_PYR', 'Add a Sierpinski styled pyramide made of spheres',
-             'generate a pyramid'),
+             'generate a Sierpinski pyramid'),
 
         ])
 
@@ -163,41 +163,54 @@ class ADD_spheres_operator(bpy.types.Operator):
 
     # ______Sierpinski pyramid function_______
 
-    def gen_sierpinski_pyramid(self, object=None, size=None, height=None, compteur=0, x_l=None, y_l=None, z_l=None, sp_gap=None, sp_rad=None  ):
+    def gen_sierpinski_pyramid(self, object=None, size=None, height=None, compteur=0, x_l=None, y_l=None, z_l=None, sp_gap=None, sp_rad=None):
+
         if (object == None):
             rad = self.sp_radius
             gap = self.gap
             x_loc = self.x_location
             y_loc = self.y_location
             z_loc = self.z_location
-            length = self.s_length
-            z_length = self.s_length
-            bpy.ops.mesh.primitive_uv_sphere_add(radius=rad, location=(x_loc, y_loc, z_loc))
-            return self.gen_sierpinski_pyramid(bpy.context.active_object, length, z_length, 0, x_loc,y_loc,z_loc,gap,rad)
+            length = 2  # set to 2 for performance purposes
+            z_length = 2
+
+            # bpy.ops.mesh.primitive_uv_sphere_add(
+            #     radius=rad, location=(x_loc, y_loc, z_loc))
+
+            # Reuse of pyramid generator, and forced join for performance purposes
+            self.merged = True
+            self.gen_spheres_pyramid()
+            self.merged = False
+            return self.gen_sierpinski_pyramid(bpy.context.active_object, length, z_length, 0, x_loc, y_loc, z_loc, gap, rad)
+
         elif (compteur <= size):
-            x_loc=x_l
-            y_loc=y_l
-            turn_size=size
-            turn_height=height
+            x_loc = x_l
+            y_loc = y_l
+            turn_size = size
+            turn_height = height
             selected = [object]
             for z in range(turn_height):
                 for y in range(turn_size):
                     for x in range(turn_size):
                         if (x == 0 and y == 0 and z == 0):
-                            pass
+                            new_obj = bpy.context.active_object
+                            new_obj.location = (x * (bpy.context.object.dimensions[0]+sp_gap)+x_loc, y * (
+                                bpy.context.object.dimensions[0]+sp_gap) + y_loc, z * (bpy.context.object.dimensions[2]*(1-1/24)+sp_gap) + z_l)
                         else:
                             bpy.ops.object.duplicate()
                             new_obj = bpy.context.active_object
-                            new_obj.location = (x, y, z)
+                            new_obj.location = (x * (bpy.context.object.dimensions[0]+sp_gap)+x_loc, y * (
+                                bpy.context.object.dimensions[0]+sp_gap) + y_loc, z * (bpy.context.object.dimensions[2]*(1-1/24)+sp_gap) + z_l)
                             selected.append(new_obj)
-                x_loc += (1 + sp_gap/(sp_rad*2)) * sp_rad
+                x_loc += (1 + sp_gap /
+                          (bpy.context.object.dimensions[0])) * bpy.context.object.dimensions[0]/2
                 turn_size -= 1
-                y_loc += (1 + sp_gap/(sp_rad*2)) * sp_rad
-            turn_size = self.s_length
+                y_loc += (1 + sp_gap /
+                          (bpy.context.object.dimensions[0])) * bpy.context.object.dimensions[0]/2
             for obj in selected:
                 obj.select_set(True)
             bpy.ops.object.join()
-            return self.gen_sierpinski_pyramid(bpy.context.active_object, turn_size, turn_height+turn_height, compteur+1, x_loc , y_loc, z_l, sp_gap, sp_rad)
+            return self.gen_sierpinski_pyramid(bpy.context.active_object, size, turn_height*2, compteur+1, x_l, y_l, z_l, sp_gap, sp_rad)
         else:
             return print("Fin recursion")
 
