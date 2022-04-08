@@ -1,10 +1,12 @@
 
 
-
+from add_sphere_formation import add_sphere_formation
+import os
+import bpy
 bl_info = {
     "name": "Add a formation made of spheres",
     "author": "Florence Constans",
-    "version": (0, 4),
+    "version": (0, 0, 7),
     "blender": (2, 93, 0),
     "location": "View3D > Add > Mesh > New Object",
     "description": "Adds a formation made of spheres meshes",
@@ -13,10 +15,6 @@ bl_info = {
     "category": "Add Mesh",
 }
 
-import bpy
-import os
-
-from add_sphere_formation import add_sphere_formation
 
 def register():
     add_sphere_formation.register()
