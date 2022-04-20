@@ -1,14 +1,14 @@
 
 
-from add_sphere_formation import add_sphere_formation
-import os
+from . import add_sphere_formation
+
 import bpy
 bl_info = {
     "name": "Add a formation made of spheres",
     "author": "Florence Constans",
-    "version": (0, 0, 7),
+    "version": ("v0", 0, 8),
     "blender": (2, 93, 0),
-    "location": "View3D > Add > Mesh > New Object",
+    "location": "View3D > Side Bar",
     "description": "Adds a formation made of spheres meshes",
     "warning": "",
     "doc_url": "",
